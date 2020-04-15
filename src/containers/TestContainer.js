@@ -18,9 +18,9 @@ class TestContainer extends Component{
     Handlers={
         fetchAllSubmissions:async()=>{
             let url = `http://localhost:4000/getSubmissionsForUser`
-            let params={testId:this.props && this.props.userData ?this.props.userData._id:'xyz'}
+            let params={userId:this.props && this.props.userData ?this.props.userData._id:'xyz'}
             try{
-             let result = await axios.get(url,params)
+              let result = await axios.get(url,{params})
              if(result.status===200){
                 this.setState({prevSubmissions:result && result.data?result.data:[]})
                 // alert("Your test result is submitted");
@@ -66,7 +66,7 @@ class TestContainer extends Component{
             }
             },
         handleSubmit:()=>{
-            this.setState({showResult:true,submitted:true})  
+            this.setState({showResult:true,submitted:true,resultType:null})  
         },
         handleClearAll:()=>{
             console.log("handle clear all")
@@ -223,6 +223,7 @@ class TestContainer extends Component{
            },
            renderResultSection:()=>{ 
             let resultElements = []
+            console.log("this.state",this.state)
             if(this.state.resultType==='all'){
                 resultElements.push( <Button style={{marginTop:"30px"}} onClick={this.Handlers.handleBackClick} color="primary">{`<- Back to questions`}</Button>)
                  
@@ -230,7 +231,7 @@ class TestContainer extends Component{
                     
                     for(let prevSub of this.state.prevSubmissions){
                         let submissionElement = [] 
-                        let {submission} = prevSub
+                        let submission = prevSub
                           if(submission && submission.result){
                               let creationTime = submission.creationTime
                               let {attempts,precent} = submission.result
