@@ -13,9 +13,34 @@ import '../../style/style.css'
 class TestContainer extends Component{
     constructor(props){
         super(props)
-        this.state={showResult:false,submitted:false,showLoginSignup:false,headerButtonText:"Login / Signup"}
+        this.state={showResult:false,resultType:null,submitted:false,showLoginSignup:false,headerButtonText:"Login / Signup",prevSubmissions:[]}
     }  
     Handlers={
+        fetchAllSubmissions:async()=>{
+            let url = `http://localhost:4000/getSubmissionsForUser`
+            let params={testId:this.props && this.props.userData ?this.props.userData._id:'xyz'}
+            try{
+             let result = await axios.get(url,params)
+             if(result.status===200){
+                this.setState({prevSubmissions:result && result.data?result.data:[]})
+                // alert("Your test result is submitted");
+             }
+             else{
+                 alert("Something went wrong while fetching all submissions");
+             }
+              }
+         catch(err){
+             alert("Something went wrong while fetching submissions");
+         }
+ 
+
+
+        },
+        handlePreviousResultClick:()=>{
+             this.Handlers.fetchAllSubmissions()
+
+            this.setState({showResult:true,resultType:'all'})
+        },
         setUser:(userData)=>{
             this.props.setUserData(userData)
             if(userData && Object.keys(userData).length){
@@ -112,13 +137,16 @@ class TestContainer extends Component{
 
 
     DataHelpers={
-        getResultData:()=>{
+        getResultData:(attempts)=>{
             let correct=0,incorrect=0
             let graphData = []
-            if(this.props.attempts && Object.keys(this.props.attempts).length){
+            if(!attempts){
+                attempts = this.props.attempts
+            }
+            if(attempts && Object.keys(attempts).length){
                 //  let attemptedQuestions = Object.keys(this.props.attempts)
-                 for(let qId in this.props.attempts){
-                      let attemptObj = this.props.attempts[qId]
+                 for(let qId in attempts){
+                      let attemptObj = attempts[qId]
                       if(attemptObj.status===questionAttemptStatus.CORRECT){
                         correct+=1
                       }
@@ -148,10 +176,12 @@ class TestContainer extends Component{
     
     Renderers={
         renderUserInfo:()=>{
-        return(<div style={{paddingTop:"30px",paddingBottom:"30px"}}>
+        return(<React.Fragment><div style={{paddingTop:"30px",paddingBottom:"30px"}}>
             <h2><bold>{`Welcome ${this.props.userData.userName}`}</bold></h2>
             <h4>try this test for performance evaluation.</h4>
-            </div>)
+            <div style={{width:"300px"}}><Button variant="contained" color="primary" onClick={this.Handlers.handlePreviousResultClick}>Previous results</Button>
+                 </div>
+            </div></React.Fragment>)
         },
          
         renderLoginSignup:()=>{
@@ -185,19 +215,59 @@ class TestContainer extends Component{
                  <Button variant="contained" color="primary" onClick={this.Handlers.handleLoginSignup}>
                  {this.state.headerButtonText}
                  </Button>
+                 
+             
              </div>
 
                 </div>)
            },
            renderResultSection:()=>{ 
             let resultElements = []
-            let graphData = this.DataHelpers.getResultData()
-            if(graphData.length){
+            if(this.state.resultType==='all'){
+                resultElements.push( <Button style={{marginTop:"30px"}} onClick={this.Handlers.handleBackClick} color="primary">{`<- Back to questions`}</Button>)
+                 
+                if(this.state.prevSubmissions && this.state.prevSubmissions.length){
+                    
+                    for(let prevSub of this.state.prevSubmissions){
+                        let submissionElement = [] 
+                        let {submission} = prevSub
+                          if(submission && submission.result){
+                              let creationTime = submission.creationTime
+                              let {attempts,precent} = submission.result
+                              
+                              submissionElement.push(<div>{`Percentage score:${precent}`}</div>)
+                              if(creationTime){
+                                submissionElement.push(<div>{`Submitted on:${new Date(creationTime).toString()}`}</div>)
+                                  
+                              }
+                              if(attempts && Object.keys(attempts).length){
+                              let graphData = this.DataHelpers.getResultData(attempts)
+                              submissionElement.push(<div className="bar-graph-container"><BarGraph data={graphData}/></div>)
+                           }
+                           else{
+                            submissionElement.push(<div><h3>No attempts done for this test.</h3></div>)
+                           }
+                           
+                        resultElements.push(<div style={{padding:"30px"}}>{submissionElement}</div>)  
+                        }
+                        
+
+                    } 
+
+                 }
+                 else{
+                    resultElements.push(<div style={{padding:"20px"}}>No submissions for you till now.</div>)
+                }     
+             }
+            else{
+                let graphData = this.DataHelpers.getResultData()
+                if(graphData.length){
                 resultElements.push( <Button style={{marginTop:"30px"}} onClick={this.Handlers.handleBackClick} color="primary">{`<- Back to questions`}</Button>)
                 resultElements.push(<div className="bar-graph-container"><BarGraph data={graphData}/></div>)
                 resultElements.push(<Button variant="contained" color="primary" onClick={this.Handlers.submitResult}>Submit your result.</Button>)
+            }            
+            }
                 return (<div className="result-container">{resultElements}</div>)
-             }
             }    
        }
 
