@@ -5,15 +5,17 @@ import {setTestContent,resetAttempts,setUserData} from '../actions/testActions'
 import {bindActionCreators} from 'redux'
 import axios from 'axios'
 import Question from '../components/Question'
+import AdminPanel from '../components/AdminPanel'
 import Button from '@material-ui/core/Button';
 import BarGraph from '../components/common/BarGraph'
-import {questionAttemptStatus} from '../constants'
+import {questionAttemptStatus,ROLE_ADMIN} from '../constants'
 import LoginSignup from '../components/common/LoginSignup'
 import '../../style/style.css'
+
 class TestContainer extends Component{
     constructor(props){
         super(props)
-        this.state={showResult:false,resultType:null,submitted:false,showLoginSignup:false,headerButtonText:"Login / Signup",prevSubmissions:[]}
+        this.state={showResult:false,resultType:null,submitted:false,showLoginSignup:true,headerButtonText:"Login / Signup",prevSubmissions:[]}
     }  
     Handlers={
         fetchAllSubmissions:async()=>{
@@ -57,8 +59,8 @@ class TestContainer extends Component{
             }
             if(this.state.headerButtonText==='Log-out'){
                 this.props.setUserData(null)
-                headerButtonText='Login / Signup'
-                this.setState({headerButtonText})
+                // headerButtonText='Login / Signup'
+                this.setState({headerButtonText,showLoginSignup:true})
             }
             else{
                 this.setState({showLoginSignup:!this.state.showLoginSignup,headerButtonText})
@@ -176,11 +178,17 @@ class TestContainer extends Component{
     
     Renderers={
         renderUserInfo:()=>{
+        let welcomeMsg = `try this test for performance evaluation.`
+        if(this.props.userData && this.props.userData.role===ROLE_ADMIN ) 
+        {
+            welcomeMsg = `You have accessed Content and Data Management System`
+        }
         return(<React.Fragment><div style={{paddingTop:"30px",paddingBottom:"30px"}}>
             <h2><bold>{`Welcome ${this.props.userData.userName}`}</bold></h2>
-            <h4>try this test for performance evaluation.</h4>
+            <h4>{welcomeMsg}</h4>
+            {this.props.userData && this.props.userData.role!==ROLE_ADMIN && 
             <div style={{width:"300px"}}><Button variant="contained" color="primary" onClick={this.Handlers.handlePreviousResultClick}>Previous results</Button>
-                 </div>
+                 </div>}
             </div></React.Fragment>)
         },
          
@@ -212,15 +220,32 @@ class TestContainer extends Component{
            renderHeader:()=>{
                 return(<div className="header-wrapper">
                     <div style={{padding:"20px",width:"30%"}}>
-                 <Button variant="contained" color="primary" onClick={this.Handlers.handleLoginSignup}>
+                 {!this.state.showLoginSignup && <Button variant="contained" color="primary" onClick={this.Handlers.handleLoginSignup}>
                  {this.state.headerButtonText}
-                 </Button>
-                 
-             
+                 </Button>}
              </div>
-
-                </div>)
+             </div>)
            },
+           renderMainScreen:()=>{
+            console.log("===debug===userData",this.props.userData)
+           
+            if(this.props.userData && this.props.userData.role===ROLE_ADMIN){
+                return(<React.Fragment><div>{this.props.userData && this.Renderers.renderUserInfo()}</div>
+                <AdminPanel />
+                </React.Fragment>)      
+           }
+            else{
+                return(<React.Fragment>
+                    <div>{this.props.userData && this.Renderers.renderUserInfo()}</div>
+                     <div>{this.Renderers.renderQuestions()}</div>
+                    <div>{this.Renderers.renderCTAs()}</div> 
+                    {this.state.showResult && this.Renderers.renderResultSection()}
+                    </React.Fragment>)
+           }
+            
+           },
+
+
            renderResultSection:()=>{ 
             let resultElements = []
             console.log("this.state",this.state)
@@ -282,17 +307,10 @@ class TestContainer extends Component{
     } 
     render(){
         return(<React.Fragment>
-            {/* {this.state.submitted && this.Renderers.renderHeader()} */}
-            
-            <div className="test-container">
+        <div className="test-container">
         <div className="test-container-header">{this.Renderers.renderHeader()}</div>
         { this.state.showLoginSignup ? this.Renderers.renderLoginSignup()
-        :<React.Fragment>
-            <div>{this.props.userData && this.Renderers.renderUserInfo()}</div>
-            <div>{this.Renderers.renderQuestions()}</div>
-            <div>{this.Renderers.renderCTAs()}</div> 
-            {this.state.showResult && this.Renderers.renderResultSection()}
-            </React.Fragment>}
+        :this.Renderers.renderMainScreen()}
             
             </div>
          </React.Fragment>)

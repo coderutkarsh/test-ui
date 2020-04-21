@@ -9,3 +9,5 @@ export const questionAttemptStatus = {
     CORRECT:'CORRECT',
     INCORRECT:'INCORRECT'
 }
+
+export const ROLE_ADMIN='superAdmin'
