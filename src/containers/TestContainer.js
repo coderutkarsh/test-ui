@@ -209,15 +209,15 @@ class TestContainer extends Component{
                                      params['userId'] = this.props.userData ? this.props.userData._id:null
                                     let feedbackResult = await axios.post(server_url,params);
                                     if(feedbackResult.status===200){
+                                        let submittedFeedbacks={}
                                         if(feedbackResult.data && feedbackResult.data.length){
-                                            let submittedFeedbacks={}
                                             for(let feedback of feedbackResult.data){
                                                 submittedFeedbacks[feedback.objectId] = feedback
-                                            } 
+                                              } 
+                                            }
                                             this.setState({submittedFeedbacks})
-                                          } 
-                                        }
-                                     }
+                                          }
+                                       }
                                 catch(err){
                                     alert("Something went wrong");
                                 }
