@@ -38,7 +38,9 @@ class LoginSignup extends Component{
          else{
             params['email']=this.state.email
             params['password']=this.state.password
-            params['userName']=this.state.userName   
+            params['userName']=this.state.userName  
+            params['grade'] = this.state.grade
+            params['target'] = this.state.target 
          }  
          try{
             let result = await axios.post(url,params)
@@ -53,12 +55,8 @@ class LoginSignup extends Component{
         catch(err){
          alert("Something went wrong, Please try again later");
         } 
- 
-
       }
-
    }
-
    Renderers = {
         renderLoginButton:()=>{
           return(<div style={{paddingTop:"20px",paddingBottom:"20px",width:"30%"}}>
@@ -66,17 +64,19 @@ class LoginSignup extends Component{
           {`${this.state.formType===FORM_TYPE_LOG_IN?"Sign up":"Log in"}`}
           </Button>
       </div>)
-
         },
         renderSignUpFields:()=>{
            return(
               <React.Fragment>
               <label for="psw-repeat"><b>User Name</b></label>
               <input type="text" placeholder="User name" name="userName" value = {this.state['userName']} onChange={(e)=>this.Handlers.setUserInput('userName',e)} required />
+              <label for="psw-repeat"><b>Target</b></label>
+              <input type="text" placeholder="Target (ex- IIT-JEE)" name="target" value = {this.state['target']} onChange={(e)=>this.Handlers.setUserInput('target',e)} required />
+              <label for="psw-repeat"><b>Grade</b></label>
+              <input type="number" placeholder="Grade" name="grade" value = {this.state['grade']} onChange={(e)=>this.Handlers.setUserInput('grade',e)} required />
               </React.Fragment>
            )
         }
-
    }
 
    render(){
@@ -85,7 +85,6 @@ class LoginSignup extends Component{
        {this.Renderers.renderLoginButton()}
         <label for="email"><b>Email</b></label>
         <input type="text"   placeholder="Enter Email" name="email" onChange={(e)=>this.Handlers.setUserInput('email',e)} required />
-        
         <label for="psw"><b>Password</b></label>
         <input type="password" value={this.state["password"]} placeholder="Enter Password" onChange={(e)=>this.Handlers.setUserInput('password',e)} name="psw" required />
         {this.state.formType===FORM_TYPE_SIGN_UP && this.Renderers.renderSignUpFields()}

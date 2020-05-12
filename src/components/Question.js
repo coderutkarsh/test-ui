@@ -17,9 +17,10 @@ class Question extends React.Component {
     }
     Handlers = {
         handleOptionSelect: (e) => {
+            
             let selectedValue = e.target.value
             this.setState({ selectedOption: selectedValue })
-            let questionId = this.props.question && this.props.question.questionId ? this.props.question.questionId : null
+            let questionId = this.props.question && this.props.question._id ? this.props.question._id : null
 
             if (questionId) {
                 let attemptObj = {}
@@ -28,9 +29,7 @@ class Question extends React.Component {
                 let solution = this.props.question.solution ? this.props.question.solution : null
                 if (solution) {
                     if (solution.answer && solution.answer.length) {
-                        switch (this.props.question.questionType) {
-                            case 'SCQ':
-                                let answer = solution.answer[0]
+                              let answer = solution.answer[0]
                                 if (selectedValue === answer) {
                                     attemptObj['status'] = questionAttemptStatus.CORRECT
                                 }
@@ -38,9 +37,7 @@ class Question extends React.Component {
                                     attemptObj['status'] = questionAttemptStatus.INCORRECT
                                 }
 
-                                break;
-                        }
-                    }
+                            }
                 }
                 this.props.setQuestionOption(questionId, attemptObj)
             }
@@ -50,7 +47,8 @@ class Question extends React.Component {
     DataHelpers = {
         getAttemptStatus: () => {
             if (this.props.attempts) {
-                let questionId = this.props.question ? this.props.question.questionId : null
+                let questionId = this.props.question ? this.props.question._id : null
+                console.log("===debug===questionId",this.props.question)
                 if (questionId) {
                     let attemptForQuestion = this.props.attempts[questionId]
                     if (attemptForQuestion) {
@@ -72,8 +70,6 @@ class Question extends React.Component {
             }
         },
         renderOptions: () => {
-            console.log("this.state.selectedOption", this.state.selectedOption)
-
             let optionElements = []
             let { options } = this.props.question
             let value = this.DataHelpers.getAttemptStatus()
@@ -87,8 +83,6 @@ class Question extends React.Component {
                     return <MenuItem value={option.label} name={option.text}>{option.text}</MenuItem>
                 }))
             }
-            console.log("option elements", optionElements)
-
             return (
                 <FormControl>
                     <InputLabel>Select Answer</InputLabel>
