@@ -18,7 +18,9 @@ class Question extends React.Component {
     Handlers = {
         handleOptionSelect: (e) => {
             
+            
             let selectedValue = e.target.value
+            console.log("=====debug====handleOptionSelect",selectedValue)
             this.setState({ selectedOption: selectedValue })
             let questionId = this.props.question && this.props.question._id ? this.props.question._id : null
 
@@ -48,7 +50,6 @@ class Question extends React.Component {
         getAttemptStatus: () => {
             if (this.props.attempts) {
                 let questionId = this.props.question ? this.props.question._id : null
-                console.log("===debug===questionId",this.props.question)
                 if (questionId) {
                     let attemptForQuestion = this.props.attempts[questionId]
                     if (attemptForQuestion) {
@@ -73,16 +74,17 @@ class Question extends React.Component {
             let optionElements = []
             let { options } = this.props.question
             let value = this.DataHelpers.getAttemptStatus()
-            //    console.log("===debug===value",value)
             if (options && options.length) {
                 // optionElements.push(<MenuItem></MenuItem>)
                 optionElements.push(<MenuItem disabled value="">
                     <em>Select Answer</em>
                 </MenuItem>)
                 optionElements = optionElements.concat(options.map((option) => {
-                    return <MenuItem value={option.label} name={option.text}>{option.text}</MenuItem>
+                    return <MenuItem value={option.label?option.label:option.text} onClick={this.Handlers.handleOptionSelect} name={option.text}>{option.text}</MenuItem>
                 }))
             }
+
+           
             return (
                 <FormControl>
                     <InputLabel>Select Answer</InputLabel>

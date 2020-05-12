@@ -22,7 +22,7 @@ let defaultTestData = {
     target:null,
     subject:null,
     questions:[{
-        index:0,questionText:[],options:[]
+        index:0,questionText:[],options:[],solution:{answer:[]}
     }]
 }
 class AdminPanel extends React.Component {
@@ -31,6 +31,21 @@ class AdminPanel extends React.Component {
         this.state={testData:{...defaultTestData}}
     }
     Handlers={
+        setSolution:(e,qIn)=>{
+            let {testData} = this.state
+            let questions = testData.questions
+            let correspondingQuestion = questions[qIn]
+            let solution = correspondingQuestion.solution?correspondingQuestion.solution:{}
+            solution['answer'][0] = e.target.value
+
+            this.setState({testData})
+
+            // correspondingQuestion
+
+            // question[] 
+
+        },
+
         setQuestionText:(e,question)=>{
            let {testData} = this.state
            let questions = testData.questions
@@ -48,7 +63,8 @@ class AdminPanel extends React.Component {
         },
         submitTest:async()=>{
              let params = this.state.testData
-            let url = `http://localhost:4000/createTest`
+            params['grade'] = parseInt(this.state.testData['grade'])
+             let url = `http://localhost:4000/createTest`
             try{
              let result = await axios.post(url,params)
              if(result.status===200){
@@ -116,10 +132,7 @@ class AdminPanel extends React.Component {
             if(correspondingQuestion){
                 let options = correspondingQuestion.options
                 options.push(defaultOption)
-
-
-
-            }
+           }
             
         this.setState({testData})
 
@@ -138,7 +151,6 @@ class AdminPanel extends React.Component {
               let options = []
               let optionNums = 4
               let {testData} = this.state
-              console.log('===renderQuestionInput===',testData)
               let questions = testData.questions
               
               const renderOptions = (options,qIn)=>{
@@ -168,10 +180,11 @@ class AdminPanel extends React.Component {
                         </div> 
                         <div style={{marginTop:"10px"}}>
                           <div style={{width:"50px"}}><Button onClick={()=>this.Handlers.addOptionsHandler(question)} color="primary">Add Option</Button></div>    
-                       
-
-                       {renderOptions(options,question.index)}
-                  
+                          {renderOptions(options,question.index)}
+                          <div style={{padding:"10px"}}>
+                          <label for="fname">Solution:</label>
+                        <input style={{marginLeft:"20px",width:"200px",backgroundColor:"#E3E3E3"}} type="text" id="fname" onChange={(e)=>this.Handlers.setSolution(e,question.index)} name="grade" />
+                       </div>
                         </div>
                         </React.Fragment>
                         ) 

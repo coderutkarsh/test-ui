@@ -370,7 +370,7 @@ class TestContainer extends Component{
                         {`Difficulty : ${fetchedTest.difficulty}`}
                         </Typography>
                         <Typography style={{padding:"10px"}}>
-                        {`Target : ${fetchedTest.Target}`}
+                        {`Target : ${fetchedTest.target}`}
                         </Typography>
                         <Typography style={{padding:"10px"}}>
                         {`Grade : ${fetchedTest.grade}`}
