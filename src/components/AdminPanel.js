@@ -146,7 +146,7 @@ class AdminPanel extends React.Component {
                     let optionElements = [] 
                     for(let [opIndex,option] of options.entries()){
                     optionElements.push(<div style={{padding:"10px"}}>
-                        <input style={{marginLeft:"20px",width:"200px"}} value={option.text} type="text" id="fname" onChange={(e)=>this.Handlers.setOptionValue(e,qIn,opIndex)} name="grade" />
+                        <input style={{marginLeft:"20px",width:"200px",backgroundColor:"#E3E3E3"}} value={option.text} type="text" id="fname" onChange={(e)=>this.Handlers.setOptionValue(e,qIn,opIndex)} name="grade" />
                        </div>)
                     }
                 return <div >
@@ -181,7 +181,7 @@ class AdminPanel extends React.Component {
                             
               for(let i=0;i<=optionNums;i++){
               options.push(<div style={{display:"flex",flexWrap:"wrap",justifyContent:"space-between"}}>
-                  <input style={{marginLeft:"20px",width:"200px"}} type="text" id="fname" onChange={this.Handlers.setTestValue} name="grade" />
+                  <input style={{marginLeft:"20px",width:"200px",backgroundColor:"#E3E3E3"}} type="text" id="fname" onChange={this.Handlers.setTestValue} name="grade" />
                   </div>)
               }
    
@@ -194,15 +194,15 @@ class AdminPanel extends React.Component {
             let testFormElements= []
             testFormElements.push(
                 <div style={{display:'flex',width:"200px",justifyContent:"space-between",alignItems:"center"}}><label for="fname">Grade:</label>
-                <input style={{marginLeft:"20px",width:"200px"}} type="text" id="fname"  value={this.state.testData.grade || ''}  onChange={this.Handlers.setTestValue} name="grade" key="grade" />
+                <input style={{marginLeft:"20px",width:"200px",backgroundColor:"#E3E3E3"}} type="text" id="fname"  value={this.state.testData.grade || ''}  onChange={this.Handlers.setTestValue} name="grade" key="grade" />
                 </div>)
             testFormElements.push(
                 <div style={{width:"200px",display:'flex',justifyContent:"space-between",alignItems:"center"}}><label for="fname">Target:</label>
-                <input style={{marginLeft:"20px",width:"200px"}} type="text" id="fname" value={this.state.testData.target || ''} onChange={this.Handlers.setTestValue} name="target" key="target" />
+                <input style={{marginLeft:"20px",width:"200px",backgroundColor:"#E3E3E3"}} type="text" id="fname" value={this.state.testData.target || ''} onChange={this.Handlers.setTestValue} name="target" key="target" />
                 </div>)
                 testFormElements.push(
                     <div style={{width:"200px",display:'flex',justifyContent:"space-between",alignItems:"center"}}><label for="fname">Subject:</label>
-                    <input style={{marginLeft:"20px",width:"200px"}} type="text" id="fname" value={this.state.testData.subject || ''} onChange={this.Handlers.setTestValue} name="subject" key="subject" />
+                    <input style={{marginLeft:"20px",width:"200px",backgroundColor:"#E3E3E3"}} type="text" id="fname" value={this.state.testData.subject || ''} onChange={this.Handlers.setTestValue} name="subject" key="subject" />
                     </div>)
 
              testFormElements.push(<div><Button onClick={this.Handlers.addQuestionHandler} color="primary">
