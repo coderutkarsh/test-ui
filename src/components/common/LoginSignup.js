@@ -41,6 +41,12 @@ class LoginSignup extends Component{
             params['userName']=this.state.userName  
             params['grade'] = this.state.grade
             params['target'] = this.state.target 
+            if(!params['email']|| !params['password'] || !params['userName'] || !params['grade'] || !params['target']){
+               alert(`required field is missing`);
+            return
+            }
+         
+
          }  
          try{
             let result = await axios.post(url,params)
