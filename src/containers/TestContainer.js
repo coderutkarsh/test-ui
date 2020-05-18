@@ -67,7 +67,7 @@ class TestContainer extends Component{
         }, 
 
         handleAttemptTest:(selectedTest)=>{
-            this.setState({selectedTest},()=>{
+            this.setState({selectedTest,submitted:false},()=>{
                 this.props.setTestContent(selectedTest)
             })
         },
@@ -191,8 +191,9 @@ class TestContainer extends Component{
             if(target && grade){
                 let server_url = `http://localhost:4000/getTest`
                 let params = {
-                      target,grade,userId:this.props.userData._id
+                      target,grade,userId:this.props.userData._id,userEmail:this.props.userData?this.props.userData.email:null
                    }
+                 console.log("====debug====params",params,this.props.userData)  
                 try{
                     let result = await axios.get(server_url,{params})
                     if(result && result.status===200){
@@ -207,7 +208,7 @@ class TestContainer extends Component{
                                      params['objectType'] = FEEDBACK_OBJECT_TYPE
                                      params['objectIds']=testIds
                                      params['userId'] = this.props.userData ? this.props.userData._id:null
-                                    let feedbackResult = await axios.post(server_url,params);
+                                     let feedbackResult = await axios.post(server_url,params);
                                     if(feedbackResult.status===200){
                                         let submittedFeedbacks={}
                                         if(feedbackResult.data && feedbackResult.data.length){

@@ -20,7 +20,6 @@ class Question extends React.Component {
             
             
             let selectedValue = e.target.value
-            console.log("=====debug====handleOptionSelect",selectedValue)
             this.setState({ selectedOption: selectedValue })
             let questionId = this.props.question && this.props.question._id ? this.props.question._id : null
 

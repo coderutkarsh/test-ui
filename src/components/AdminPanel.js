@@ -21,6 +21,8 @@ let defaultTestData = {
     grade:null,
     target:null,
     subject:null,
+    studentEmails:null,
+    isPublic:false,
     questions:[{
         index:0,questionText:[],options:[],solution:{answer:[]}
     }]
@@ -37,13 +39,12 @@ class AdminPanel extends React.Component {
             let correspondingQuestion = questions[qIn]
             let solution = correspondingQuestion.solution?correspondingQuestion.solution:{}
             solution['answer'][0] = e.target.value
-
             this.setState({testData})
-
-            // correspondingQuestion
-
-            // question[] 
-
+        },
+        handleCheckbox:(e)=>{
+            let testData = this.state.testData
+            testData['isPublic'] = e.target.checked
+            this.setState({testData})
         },
 
         setQuestionText:(e,question)=>{
@@ -63,6 +64,9 @@ class AdminPanel extends React.Component {
         },
         submitTest:async()=>{
              let params = this.state.testData
+             if(params['studentEmails'] && !params.isPublic){
+                params['studentEmails'] = params['studentEmails'].split(',').map((id)=>id.trim())
+             }
             params['grade'] = parseInt(this.state.testData['grade'])
              let url = `http://localhost:4000/createTest`
             try{
@@ -78,8 +82,6 @@ class AdminPanel extends React.Component {
          catch(err){
              alert("Something went wrong");
          }
-
-
         },
         setTestValue:(e)=>{
             let name = e.target.name
@@ -87,7 +89,6 @@ class AdminPanel extends React.Component {
             let testData = this.state.testData
             testData[name]=value
             this.setState({testData},()=>{
-                console.log('Admin panel state',this.state)
             })
             // testData
         },
@@ -213,10 +214,21 @@ class AdminPanel extends React.Component {
                 <div style={{width:"200px",display:'flex',justifyContent:"space-between",alignItems:"center"}}><label for="fname">Target:</label>
                 <input style={{marginLeft:"20px",width:"200px",backgroundColor:"#E3E3E3"}} type="text" id="fname" value={this.state.testData.target || ''} onChange={this.Handlers.setTestValue} name="target" key="target" />
                 </div>)
-                testFormElements.push(
+            testFormElements.push(
                     <div style={{width:"200px",display:'flex',justifyContent:"space-between",alignItems:"center"}}><label for="fname">Subject:</label>
                     <input style={{marginLeft:"20px",width:"200px",backgroundColor:"#E3E3E3"}} type="text" id="fname" value={this.state.testData.subject || ''} onChange={this.Handlers.setTestValue} name="subject" key="subject" />
                     </div>)
+             testFormElements.push(
+                <div style={{width:"200px",display:'flex',justifyContent:"space-between",alignItems:"center",opacity:this.state.testData.isPublic?0.5:1}}><label for="fname">Student Emails:</label>
+                <input disabled={this.state.testData.isPublic} style={{marginLeft:"20px",width:"200px",backgroundColor:"#E3E3E3"}} type="text" id="fname" value={this.state.testData.studentEmails || ''} onChange={this.Handlers.setTestValue} name="studentEmails" key="subject" />
+                </div>)
+             testFormElements.push( 
+               <div style={{width:"150px",display:'flex',justifyContent:"space-between",alignItems:"center"}}>
+                <input type="checkbox" id="vehicle1" name="isPublic" value={this.state.testData.subject} onChange={this.Handlers.handleCheckbox} /> 
+               <label for="vehicle1">Public test</label>
+              </div>)
+             
+
 
              testFormElements.push(<div><Button onClick={this.Handlers.addQuestionHandler} color="primary">
              + Add Question
